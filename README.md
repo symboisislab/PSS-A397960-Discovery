@@ -1,6 +1,6 @@
 # Project Soul Seed × OEIS A397960: Bi-Level Algorithmic Co-evolution & Extremal Lattice Discovery
 
-**Author / Lead Researcher:** [填入你的名字 / GitHub 帳號] (Symbiosis Lab / Project Soul Seed)  
+**Author / Lead Researcher:** [Chien-Cheng Dennis Lin / [symboisislab/PSS-A397960-Discovery] ]
 **Date of Discovery & Timestamp:** October 14, 2026  
 **Target Sequence:** [OEIS A397960](https://oeis.org/A397960) (*Maximum number of distinct positive differences of an $n$-element subset of $\{0, 1, \dots, n(n-1)/2\}$*, originally authored by Wujie Gu, Aug 2026).  
 **Status:** Constructive Lower Bound **$a(15) \ge 90$** Established (9 Non-isomorphic Families Discovered) & Exact Reproduction of $a(3) \dots a(14)$.
