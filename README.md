@@ -118,4 +118,4 @@ if __name__ == "__main__":
 
 The core **PSS Bi-Level Co-evolutionary Engine** and **Deep Tabu Exact-LNS Solver** scripts are currently maintained in a private module pending joint publication and exhaustive verification of $a(15)$. For academic collaboration or verification inquiries, please contact the author.
 
-© 2026 [填入你的名字]. All Rights Reserved.
+© 2026 [Chien-Cheng Dennis Lin]. All Rights Reserved.
