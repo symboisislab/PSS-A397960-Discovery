@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use these witnesses or code, please cite this repository and OEIS A397960."
+title: "PSS × OEIS A397960: a constructive lower bound a(15) >= 91 from LLM-written search code"
+authors:
+  - family-names: Lin
+    given-names: Chien-Cheng Dennis
+    affiliation: "Symbiosis Lab; National Chung Hsing University"
+  - family-names: Gu
+    given-names: Wujie
+date-released: 2026-10-16
+url: "https://github.com/symboisislab/PSS-A397960-Discovery"
+license: MIT
+keywords: [OEIS, A397960, distinct differences, Golomb ruler, large neighborhood search, LLM]
+references:
+  - type: generic
+    title: "Sequence A397960"
+    authors:
+      - family-names: Gu
+        given-names: Wujie
+    url: "https://oeis.org/A397960"
