@@ -35,7 +35,7 @@ The work proceeded in three stages of different character. We report them separa
 
 1. **Known answers guided Stage I.** The evolution loop reported each candidate's score together with the known optimum (for example, "n=4: 6 points (optimum 6)"), and the generation-0 history included an example optimal subset {0, 1, 4, 6}. The selection pressure was therefore guided by known values. The prompts contained no branch-and-bound code, but they did suggest directions (collision penalties, distance to the boundary, adapting to the number of remaining steps). The Stage I system prompt and user-prompt template are part of the evolution-loop code and will be released in full with the accompanying paper. Selected excerpts of the Stage II conversations will be released as well, and the full transcripts are available from the authors on reasonable request.
 2. **Stage I was run once.** We have no distribution over repeated runs, and no ablation of the system prompt.
-3. **n = 12–14 were warm starts.** These values were reached from seeds scoring 57, 67 and 78 (one below each record), with the record used as the stopping target, by three different solvers. In an independent test, the solver that reached a(14) = 79 did so in 1 of 4 runs of 30 seconds (median 78).
+3. **n = 12–14 were warm starts.** These values were reached from seeds scoring 57, 67 and 78 (one below each record), with the record used as the stopping target, by three different solvers. In an independent test by W. Gu, the vault version of the solver that reached a(14) = 79 was run four times for 30 seconds each, starting from its own built-in multi-family seed pool (not from the 78-point seed); 1 of 4 runs reached 79 (median 78). Success rates depend on the seeds supplied.
 4. **A lower bound, not an optimality proof.** a(15) ≤ 91 has not been established. As a heuristic only: the density ratio φ(n) = a(n)/m decreases for n = 11–14 (0.8909, 0.8788, 0.8718, 0.8681), with differences shrinking roughly by half each step, and extrapolating gives φ(15) ≈ 0.866, i.e. about 90.9. This is consistent with 91, but φ is not monotone over all n (it increases from n = 6 to n = 8), so this is not evidence of optimality.
 
 ---
@@ -95,7 +95,7 @@ Simulated annealing and 1-opt moves did not get past the 1-point-short plateaus 
 | 11 | 55 | 49 | 49 | scratch | A, 0.51 s | `[0, 1, 2, 6, 17, 25, 33, 43, 46, 53, 55]` | `[1, 1, 4, 11, 8, 8, 10, 3, 7, 2]` |
 | 12 | 66 | 58 | 58 | warm (57) | C, 2.20 s | `[0, 1, 2, 6, 17, 26, 35, 44, 56, 58, 63, 66]` | `[1, 1, 4, 11, 9, 9, 9, 12, 2, 5, 3]` |
 | 13 | 78 | 68 | 68 | warm (67) | D, 4.42 s | `[0, 1, 2, 12, 13, 29, 33, 48, 55, 64, 70, 73, 78]` | `[1, 1, 10, 1, 16, 4, 15, 7, 9, 6, 3, 5]` |
-| 14 | 91 | 79 | 79 | warm (78) | E, 8.31 s; 1/4 runs in 30 s (median 78) | `[0, 1, 4, 11, 24, 29, 42, 55, 74, 76, 82, 88, 90, 91]` | `[1, 3, 7, 13, 5, 13, 13, 19, 2, 6, 6, 2, 1]` |
+| 14 | 91 | 79 | 79 | warm (78) | E, 8.31 s; 1/4 runs in 30 s from its own seed pool (median 78) | `[0, 1, 4, 11, 24, 29, 42, 55, 74, 76, 82, 88, 90, 91]` | `[1, 3, 7, 13, 5, 13, 13, 19, 2, 6, 6, 2, 1]` |
 
 Times are single Colab runs and are machine-dependent.
 
@@ -126,18 +126,20 @@ Config #0 came from solver A; #1–#8 from solver F. Solver F deduplicated only 
 
 ### 5.4 Observation: arithmetic runs in the middle
 
-Several high-scoring subsets contain a run of equal steps in the middle: 91-2 has five steps of 10 (`29, 39, 49, 59, 69, 79`), 91-1 has four steps of 11, and the 90-point configurations #3/#6 have four steps of 12. In these subsets the repeated differences produced by the run are produced only inside the run:
+Several high-scoring subsets contain a run of equal steps in the middle: 91-2 has five steps of 10 (`29, 39, 49, 59, 69, 79`), 91-1 has four steps of 11, and the 90-point configurations #3/#6 have four steps of 12.
 
-| Subset | Run | Step | Excess collisions in the whole set | Collisions inside the run | Run's differences appear outside the run? |
-|:--|:--|:--|:--|:--|:--|
-| 91-2 | 29, 39, 49, 59, 69, 79 | 10 | 14 | 10 | No |
-| 91-1 | 29, 40, 51, 62, 73 | 11 | 14 | 6 | No |
-| 90 #3 | 28, 40, 52, 64, 76 | 12 | 15 | 6 | No |
-| 90 #2 | 21, 33, 45, 57 | 12 | 15 | 3 | No |
+| Subset | Run (k marks) | Step | Excess collisions in the whole set | Of which forced by the run: C(k,2) − (k−1) | Left for all other pairs | Run's differences appear outside the run? |
+|:--|:--|:--|:--|:--|:--|:--|
+| 91-2 | 29, 39, 49, 59, 69, 79 (k = 6) | 10 | 14 | 10 | 4 (for 90 pairs) | No |
+| 91-1 | 29, 40, 51, 62, 73 (k = 5) | 11 | 14 | 6 | 8 (for 95 pairs) | No |
+| 90 #3 | 28, 40, 52, 64, 76 (k = 5) | 12 | 15 | 6 | 9 (for 95 pairs) | No |
+| 90 #2 | 21, 33, 45, 57 (k = 4) | 12 | 15 | 3 | 12 (for 99 pairs) | No |
 
 ("Excess collisions" = 105 pairs minus the number of distinct differences.)
 
-This suggests a hypothesis: high-scoring subsets may concentrate part of the unavoidable collisions inside a middle arithmetic run. **This is a descriptive observation, not an established structural law.** For comparison, W. Gu estimates that such runs occur in about 0.48% of random subsets and about 5% of high-scoring local optima; only two 91-point witnesses are known, so no statistical claim is made.
+**How to read this table.** The fifth column is arithmetic, not evidence: an arithmetic run of k marks has C(k,2) pairs but only k − 1 distinct differences, so it always produces C(k,2) − (k−1) repeats, whatever the subset or the step. The last column is a real observation, but largely a forced one: with so little collision budget left (only 4 for the remaining 90 pairs in 91-2), any repeat of a run difference outside the run would lower the score. So the run does not "absorb" collisions; it creates them.
+
+**What is actually surprising is the cost.** In 91-2, 6 of the 15 marks (40%) use up 10 of the 14 allowed collisions (71%), and the set still ties the best known value. Intuitively, high-scoring sets should avoid arithmetic progressions, since they waste differences. That such a run appears in the best sets we found suggests the end marks compensate for this cost. How they do so is an open question, and it can be tested: fix a run of step Δ and length k, search only the ends, and compare against unconstrained search under the same time budget (sweeping Δ = 10–12 and k = 4–6). If the constrained search finds equal or better scores faster, the run is usable structure; if not, it is a by-product of high scores. **This is a hypothesis, not a result.** Only two 91-point witnesses are known. Frequency baselines for such runs in random and high-scoring sets will be reported only after they are recomputed under a rule fixed in advance (e.g. a run of at least 4 marks with three equal steps).
 
 ---
 
@@ -505,3 +507,4 @@ if __name__ == "__main__":
 | V1.4 | 2026-10-16 | Corrected the description to match the original Colab records: (1) the evolution model was `gemini-3.1-pro-preview`, not Gemini 2.5 Flash; (2) removed the claim that failed instances received a 0-point penalty, which was not part of the run; (3) stated that the feedback included known optima and that prompts suggested directions, replacing "blind test" and "autonomously derived"; (4) separated Stage I (evolution) from Stage II (human–AI solver co-design) and attributed each result to the solver that produced it; (5) split the reproduction table into from-scratch (n = 9–11) and warm-start (n = 12–14), and changed "n = 3–14" to "n = 4–14"; (6) replaced the claim that the mid-ruler runs were "confirmed" with a descriptive observation plus a collision table; (7) added the non-monotonicity caveat to the φ extrapolation; (8) relabelled the 90-point tier, since a(15) = 90 is no longer a candidate value; (9) added the exact multi-family explorer that produced a(15) ≥ 91 and labelled the short LNS solver as a reference reimplementation with measured performance; (10) added an AI-use disclosure and a provenance table. |
 | V1.4 r2 | 2026-10-16 | Named the model used in the Stage II conversations (Gemini 4 Argon) in the AI-use disclosure, Section 1 and Section 4. |
 | V1.4 r3 | 2026-10-16 | Corrected the Stage II setting: the conversations took place in the Gemini web app, not in Colab (Colab was used only to run the code). Specified that the Stage I prompts will be released in full and the Stage II conversations as labelled excerpts, with full transcripts available on request. |
+| V1.4 r4 | 2026-10-16 | Following W. Gu's addendum (V1.1): (1) Section 5.4 rewritten. The "collisions inside the run" column is shown as C(k,2) − (k−1), which is determined by the run length, and a "left for all other pairs" column is added. The earlier wording that high-scoring sets "concentrate collisions inside the run" reversed the causality and is replaced by the cost question and a testable experiment. The 0.48% / 5% baselines are removed until they are recomputed under a fixed rule. (2) Section 2 and Table 5.1: the 1-in-4 result for n = 14 was obtained from the solver's own seed pool, not from the 78-point seed. |
