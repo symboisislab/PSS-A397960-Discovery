@@ -1,87 +1,149 @@
-# Project Soul Seed × OEIS A397960: Bi-Level Algorithmic Co-evolution & Constructive Lower Bound $a(15) \ge 91$
+# Project Soul Seed × OEIS A397960: A Constructive Lower Bound a(15) ≥ 91 from LLM-Evolved Heuristics and Human–AI Solver Design
 
-**Author / Lead Researcher:** Chien-Cheng Dennis Lin ([symboisislab/PSS-A397960-Discovery](https://github.com/symboisislab/PSS-A397960-Discovery))  
-**Co-Author & Independent Verification:** Wujie (Gavin) Gu (Original Author of [OEIS A397960](https://oeis.org/A397960); executed the 600s isolated container verification establishing $a(15) \ge 91$)  
-**Date of Discovery & Timestamp:** October 14, 2026 (Updated October 16, 2026 with $a(15) \ge 91$)  
-**Target Sequence:** [OEIS A397960](https://oeis.org/A397960) (*Maximum number of distinct positive differences of an $n$-element subset of $\{0, 1, \dots, n(n-1)/2\}$*, offset = 3, originally authored by Wujie Gu, Aug 2026).  
-**Status:** Constructive Lower Bound **$a(15) \ge 91$** Established (**2 Non-isomorphic 91-Point Families** + 8 Non-isomorphic 90-Point Sub-optimal Families) & Constructive Reproduction of Known OEIS Records $a(3) \dots a(14)$.  
-**Open-Source License:** Code released under the **MIT License**; constructive data and documentation under **CC BY 4.0** (ensuring both verifiable results and fully reproducible search methodology).
+**Authors:** Chien-Cheng Dennis Lin (Symbiosis Lab) and Wujie (Gavin) Gu (author of [OEIS A397960](https://oeis.org/A397960))
+**Repository:** [symboisislab/PSS-A397960-Discovery](https://github.com/symboisislab/PSS-A397960-Discovery)
+**Target sequence:** [OEIS A397960](https://oeis.org/A397960): a(n) is the maximum number of distinct positive differences of an n-element subset of {0, 1, …, n(n−1)/2} (offset 3; Wujie Gu, Aug 13 2026; approved).
+**Dates:** Colab experiments 2026-10-14; independent verification and a(15) ≥ 91 on 2026-10-16.
+**README version:** V1.4 (2026-10-16). See the revision log at the end.
+**License:** code under the MIT License; data and documentation under CC BY 4.0.
 
----
+> **Status in one line.** We give two explicit 15-element subsets of {0, …, 105} with 91 distinct positive differences each, so **a(15) ≥ 91** (a constructive lower bound, not a proof of optimality). Both witnesses were independently rescored from scratch by W. Gu in an isolated container.
 
-## 1. Executive Summary & Methodological Scope
-
-This research applies the "Algebraic Guardian" and "Invariant Subspace Constraint" natural language control protocols of **Project Soul Seed (PSS)** to the extremal additive combinatorics problem [OEIS A397960](https://oeis.org/A397960).
-
-By constructing a **Bi-Level Closed-Loop Evolutionary System**:
-- **Upper-Level Heuristic Generator:** Governed by the PSS protocol, a Large Language Model (Gemini 2.5 Flash) evolves Python priority scoring and lookahead search functions on training instances $n \in \{4, 5, 6, 7, 8\}$ (any failed or timed-out instance incurs a strict 0-point penalty).
-- **Lower-Level Exact Verifier & LNS Solver:** Executes deterministic difference set evaluation and Deep Tabu Exact-LNS (Large Neighborhood Search).
-
-Under blind-test conditions—without providing any human-expert branch-and-bound (B&B) code—the system **autonomously re-derived combinatorial upper-bound pruning inequalities algebraically equivalent to the OEIS reference implementation within 4 evolutionary generations**, alongside bitmasking acceleration and Golomb ruler boundary geometric bias. Combined with Deep Tabu Exact-LNS, the system constructively reproduced all known OEIS records for $n = 3 \dots 14$. Furthermore, for the previously unestablished term **$n = 15$ ($m = 105$)**, an extended 600-second run (1,052 trials) independently verified in an isolated container (`python3 -I`, with from-scratch difference set rescoring `bad = 0`) established a new constructive lower bound of **$a(15) \ge 91$** across **2 mutually non-isomorphic (non-reflection) structural families**, in addition to 8 non-isomorphic families at 90.
-
-> **⚠️ Important Methodological & Epistemic Scope Statement:**  
-> 1. **Training Selection Pressure & Extrapolation Distribution:** Selection pressure during the 4-generation evolution on $n \le 8$ was guided by known optimal values (standard in the FunSearch paradigm: *selecting code via known targets*, without embedding answers in the code). Extrapolation to $n = 14$ ($a(14) = 79$) under a 30-second budget across 4 independent runs achieved a **1/4 success rate reaching 79, with a median score of 78** (fastest run: 8.31s).  
-> 2. **Constructive Lower Bound vs. Exhaustive Optimality Proof:** Providing explicit 15-element subsets of $\{0, \dots, 105\}$ generating 91 distinct positive differences rigorously establishes the **constructive lower bound $a(15) \ge 91$**. While an exhaustive proof of $a(15) \le 91$ is not required to establish this lower bound, the second-order finite differences of the density ratio $\phi(n) = a(n)/m$ for $n = 11 \dots 14$ ($-0.0121 \to -0.0070 \to -0.0037$, halving at each step) extrapolate to $\phi(15) \approx 0.866 \implies a(15) \approx 90.93$, strongly indicating that **91 sits on the true asymptotic trend** (whereas 92 would require $\phi = 0.876$, violating monotonicity).
+> **AI use disclosure.** All search code in this repository was written by Google Gemini models, either inside an automated evolution loop (`gemini-3.1-pro-preview`) or in conversational sessions with the first author in Google Colab (exact model version to be confirmed). The authors ran the code, inspected the results and directed revisions. All reported subsets were verified by independent code. 
 
 ---
 
-## 2. Four-Generation AI Algorithmic Evolution Log
+## 1. Summary
 
-| Evolutionary Generation | Emergent Algorithmic Structure | $n=4$ | $n=5$ | $n=6$ | $n=7$ | $n=8$ | Verification Total Score | Key Breakthrough Significance |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Gen 0** | Pure Single-Step Greedy | 5 | 8 | 13 | 18 | 23 | 67 | Trapped in local optima |
-| **Gen 1** | Geometric Boundary Weight (`abs(cand - N/2)` + collision penalty) | **6** | **9** | **13** | **19** | 25 | 72 | Overcame misleading script targets, autonomously reached known optimum $a(7) = 19$ |
-| **Gen 2** | 3-Step Lookahead Tree with $O(1)$ Early Stopping | **6** | **9** | **13** | **19** | 25 | 72 | Spontaneous transition from static algebraic formulas to multi-step search trees |
-| **Gen 3** | Dynamic Beam Search + Path Multiplicity | **6** | **9** | **13** | **19** | **26** | **73** | Reached $a(8) = 26$; $n = 4 \dots 8$ all matched known OEIS optimal records |
-| **Gen 4** | **Bitmask DFS + Combinatorial Upper-Bound Pruning (Bitmask B&B)** | **6** | **9** | **13** | **19** | **26** | **73** | **Autonomously derived pruning bound `rem*(n-rem) + rem*(rem-1)//2` (verified equivalent to OEIS)** |
+The work proceeded in three stages of different character. We report them separately because they support different claims.
 
----
+| Stage | What happened | Who produced the code | Uses known answers? |
+|:--|:--|:--|:--|
+| I. Program evolution | An LLM rewrote a scoring heuristic for 4 generations, evaluated on n = 4–8 | Automated loop (`gemini-3.1-pro-preview`) | **Yes**: the feedback to the model included the known optimum for each n |
+| II. Solver co-design | Beam search, local search and large-neighbourhood search solvers were written and revised over several rounds | The first author in conversation with Gemini | n = 12–14: known values used as stopping targets. n = 15: no known value exists |
+| III. Verification | Every reported subset was rescored by independent code; the a(15) ≥ 91 run was performed by W. Gu in an isolated container | W. Gu, authors | No |
 
-## 3. Constructive Reproduction of Known OEIS Records $a(9) \dots a(14)$ & Multi-Run Distribution
-
-| Term $n$ | Max Range $m = n(n-1)/2$ | Known OEIS Record | Reached Lower Bound | Search Runtime & Distribution Note | Constructive Witness Subset $A$ | Adjacent Step Sizes |
-| :---: | :---: | :---: | :---: | :--- | :--- | :--- |
-| **9** | 36 | 32 | **32** | 0.21s | `[0, 1, 3, 13, 20, 27, 31, 35, 36]` | `[1, 2, 10, 7, 7, 4, 4, 1]` |
-| **10** | 45 | 40 | **40** | 0.32s | `[0, 1, 7, 11, 15, 24, 40, 42, 43, 45]` | `[1, 6, 4, 4, 9, 16, 2, 1, 2]` |
-| **11** | 55 | 49 | **49** | 0.51s | `[0, 1, 2, 6, 17, 25, 33, 43, 46, 53, 55]` | `[1, 1, 4, 11, 8, 8, 10, 3, 7, 2]` |
-| **12** | 66 | 58 | **58** | 2.20s | `[0, 1, 2, 6, 17, 26, 35, 44, 56, 58, 63, 66]` | `[1, 1, 4, 11, 9, 9, 9, 12, 2, 5, 3]` |
-| **13** | 78 | 68 | **68** | 4.42s | `[0, 1, 2, 12, 13, 29, 33, 48, 55, 64, 70, 73, 78]` | `[1, 1, 10, 1, 16, 4, 15, 7, 9, 6, 3, 5]` |
-| **14** | 91 | 79 | **79** | Fastest: 8.31s<br>*(4 runs @ 30s: 1/4 hit 79, median 78)* | `[0, 1, 4, 11, 24, 29, 42, 55, 74, 76, 82, 88, 90, 91]` | `[1, 3, 7, 13, 5, 13, 13, 19, 2, 6, 6, 2, 1]` |
+**Main results**
+- **a(15) ≥ 91**, with 2 non-isomorphic witnesses (found by the multi-family explorer, Section 7.1, in a 600-second run of 1,052 trials; every emitted configuration was rescored from scratch with zero discrepancies, `bad = 0`).
+- 9 configurations with 90 distinct differences at n = 15, forming **8 non-isomorphic families** (one pair are mirror images under x ↦ 105 − x).
+- Constructive reproduction of the known values for **n = 4–14**: n = 4–8 by the evolved heuristic, n = 9–11 from scratch, and n = 12–14 by local search started from 1-point-short seeds.
+- The Generation-4 program contains a pruning bound that is algebraically equivalent to the bound in the OEIS reference program (confirmed by W. Gu).
 
 ---
 
-## 4. Constructive Lower Bound $a(15) \ge 91$ (2 Non-Isomorphic Families) and the "Mid-Ruler Arithmetic Progression Core"
+## 2. Scope and Caveats
 
-### 4.1 New Record Lower Bound: $a(15) \ge 91$ Across 2 Non-Reflection Families (600s, 1,052 Trials, `bad = 0`)
-In a 600-second run (1,052 trials), Module 4 discovered **2 valid subsets achieving 91 distinct positive differences** (leaving only 14 missing differences). Reflection checking confirms that the $105-x$ reflection of Family 91-1 is `[0, 1, 2, 8, 15, 20, 32, 43, 54, 65, 76, 92, 101, 102, 105]`, which is distinct from Family 91-2. Both independent families exhibit striking **Mid-Ruler Arithmetic Progression Cores**:
-
-| Family ID | Distinct Diffs | Structural Characteristic | Constructive Witness Subset $A$ ($\vert{}A\vert{}=15, m=105$) | Adjacent Step Sequence |
-| :--- | :---: | :--- | :--- | :--- |
-| **Family 91-1** | **91** | **4-step `[11, 11, 11, 11]` arithmetic core ($\Delta=11$)** | `[0, 3, 4, 13, 29, 40, 51, 62, 73, 85, 90, 97, 103, 104, 105]` | `[3, 1, 9, 16, 11, 11, 11, 11, 12, 5, 7, 6, 1, 1]` |
-| **Family 91-2** | **91** | **5-step `[10, 10, 10, 10, 10]` arithmetic core ($\Delta=10$)** | `[0, 2, 6, 15, 17, 29, 39, 49, 59, 69, 79, 97, 100, 104, 105]` | `[2, 4, 9, 2, 12, 10, 10, 10, 10, 10, 18, 3, 4, 1]` |
-
-### 4.2 Sub-Optimal Tier: $a(15) = 90$ Witnesses (9 Configurations Spanning 8 Non-Isomorphic Families A–H)
-*(Config #3 and Config #6 are $105 - x$ reflection twins belonging to Family D)*:
-
-| Family ID | Config # | Structural Characteristic | Constructive Subset $A$ ($\vert{}A\vert{}=15, m=105$, Distinct Diffs $= 90$) | Adjacent Step Sequence |
-| :--- | :---: | :--- | :--- | :--- |
-| **Family A** | #0 | Asymmetric sparse interior | `[0, 1, 8, 12, 26, 43, 44, 51, 71, 81, 84, 90, 100, 103, 105]` | `[1, 7, 4, 14, 17, 1, 7, 20, 10, 3, 6, 10, 3, 2]` |
-| **Family B** | #1 | Mid-right `+7/+6` cluster | `[0, 4, 8, 9, 19, 30, 42, 58, 65, 71, 78, 85, 102, 103, 105]` | `[4, 4, 1, 10, 11, 12, 16, 7, 6, 7, 7, 17, 1, 2]` |
-| **Family C** | #2 | Mid `[12, 12, 12]` + `[7, 7]` hybrid | `[0, 1, 2, 4, 6, 21, 33, 45, 57, 71, 80, 87, 94, 97, 105]` | `[1, 1, 2, 2, 15, 12, 12, 12, 14, 9, 7, 7, 3, 8]` |
-| **Family D** | #3 | **Pure 4-step `[12, 12, 12, 12]` core** | `[0, 1, 5, 15, 28, 40, 52, 64, 76, 83, 85, 94, 96, 102, 105]` | `[1, 4, 10, 13, 12, 12, 12, 12, 7, 2, 9, 2, 6, 3]` |
-| **Family D*** | #6 | **$105-x$ mirror twin of #3 (Family D)** | `[0, 3, 9, 11, 20, 22, 29, 41, 53, 65, 77, 90, 100, 104, 105]` | `[3, 6, 2, 9, 2, 7, 12, 12, 12, 12, 13, 10, 4, 1]` |
-| **Family E** | #4 | Symmetric step-10 `[10, 10]` core | `[0, 2, 3, 5, 14, 16, 38, 48, 58, 75, 79, 97, 98, 104, 105]` | `[2, 1, 2, 9, 2, 22, 10, 10, 17, 4, 18, 1, 6, 1]` |
-| **Family F** | #5 | Harmonic `[3, 13, 3]` step motif | `[0, 4, 6, 8, 31, 34, 47, 50, 66, 83, 84, 90, 95, 104, 105]` | `[4, 2, 2, 23, 3, 13, 3, 16, 17, 1, 6, 5, 9, 1]` |
-| **Family G** | #7 | Alternating `[11, 14, 5, 11, 14]` | `[0, 1, 4, 10, 27, 28, 39, 53, 58, 69, 83, 90, 98, 103, 105]` | `[1, 3, 6, 17, 1, 11, 14, 5, 11, 14, 7, 8, 5, 2]` |
-| **Family H** | #8 | Wide asymmetric lattice | `[0, 2, 7, 18, 23, 31, 42, 50, 67, 75, 89, 95, 101, 104, 105]` | `[2, 5, 11, 5, 8, 11, 8, 17, 8, 14, 6, 6, 3, 1]` |
-
-### 4.3 Structural Insight & AP Baseline Calibration (5% in High-Scoring Local Optima vs. 0.48% Random)
-- **Strengthening at Extremal Bound 91:** While $a(15)=90$ Family D exhibited a 4-step $\Delta=12$ progression (`[12, 12, 12, 12]`), the newly discovered $a(15) \ge 91$ witnesses display even stronger interior periodicity: Family 91-1 contains `[11, 11, 11, 11]` ($\Delta=11$), and Family 91-2 contains a **5-step (6-element) continuous arithmetic progression `[10, 10, 10, 10, 10]`** (`29, 39, 49, 59, 69, 79`, $\Delta=10$).
-- **Honest Baseline Denominator (5%):** Against uniform random subsets, such arithmetic progression cores occur at a rate of $0.48\%$. More rigorously, when evaluated against the baseline of **high-scoring local optima**, arithmetic progression structures appear in **5%** of high-scoring configurations. Observing long arithmetic cores in **100% (2/2)** of the $a(15) \ge 91$ families (and in multiple 90-point families) confirms a non-trivial structural preference: concentrating inevitable difference collisions in a periodic interior lattice maximizes collision-free cross-differences with dense boundary combs.
+1. **Known answers guided Stage I.** The evolution loop reported each candidate's score together with the known optimum (for example, "n=4: 6 points (optimum 6)"), and the generation-0 history included an example optimal subset {0, 1, 4, 6}. The selection pressure was therefore guided by known values. The prompts contained no branch-and-bound code, but they did suggest directions (collision penalties, distance to the boundary, adapting to the number of remaining steps). The full prompts are given in the private vault and will be released with the accompanying paper.
+2. **Stage I was run once.** We have no distribution over repeated runs, and no ablation of the system prompt.
+3. **n = 12–14 were warm starts.** These values were reached from seeds scoring 57, 67 and 78 (one below each record), with the record used as the stopping target, by three different solvers. In an independent test, the solver that reached a(14) = 79 did so in 1 of 4 runs of 30 seconds (median 78).
+4. **A lower bound, not an optimality proof.** a(15) ≤ 91 has not been established. As a heuristic only: the density ratio φ(n) = a(n)/m decreases for n = 11–14 (0.8909, 0.8788, 0.8718, 0.8681), with differences shrinking roughly by half each step, and extrapolating gives φ(15) ≈ 0.866, i.e. about 90.9. This is consistent with 91, but φ is not monotone over all n (it increases from n = 6 to n = 8), so this is not evidence of optimality.
 
 ---
 
-## 5. Standalone Verification & Isomorphism Check Script
+## 3. Stage I: Program Evolution
+
+| Setting | Value |
+|:--|:--|
+| Model | `gemini-3.1-pro-preview`, temperature 0.7 |
+| Task | Write `priority_score(candidate, current_subset, n, N)`; the evaluator builds a subset greedily from 0 using this score |
+| Training instances | n = 4, 5, 6, 7, 8; fitness = sum of distinct-difference counts |
+| Feedback to model | Each n's score and the known optimum |
+| Acceptance | A new program replaces the incumbent if its total is ≥ the best so far (ties replace) |
+| Known-value table in the script | `{2:1, 3:3, 4:6, 5:9, 6:13, 7:18}` (a(7) was mistyped as 18; the correct value is 19; n = 8 was missing) |
+| Evaluator | Python `exec`; this is an evaluator, not a security sandbox |
+
+| Gen | n=4 | n=5 | n=6 | n=7 | n=8 | Total | Structure of the program |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| 0 (seed) | 5 | 8 | 13 | 18 | 23 | 67 | Pure greedy: count new differences |
+| 1 | 6 | 9 | 13 | 19 | 25 | 72 | Gain, collision penalty, distance from N/2 weighted by remaining steps, minimum distance |
+| 2 | 6 | 9 | 13 | 19 | 25 | 72 | Exact 2-step and 3-step lookahead with sorted early termination |
+| 3 | 6 | 9 | 13 | 19 | 26 | 73 | Beam-search lookahead with adaptive width |
+| 4 | 6 | 9 | 13 | 19 | 26 | 73 | Bitmask representation; budgeted branch-and-bound DFS with an upper-bound prune |
+
+The OEIS values are 6, 9, 13, 19, 26 (total 73). Generation 1 scored 19 at n = 7, exceeding the mistyped reference value of 18. Generation 4 kept the same total as Generation 3 and replaced it under the tie rule.
+
+**Equivalence of the pruning bound.** Generation 4 prunes with `max_poss = curr_score + rem * len(curr_list) + rem * (rem - 1) // 2`. Since `len(curr_list) = n − rem`, this equals rem(n − rem) + rem(rem − 1)/2. With d = n − rem elements placed, this is (n−d)(n−d−1)/2 + d(n−d), the bound in the OEIS PROG. The DFS has a node budget, so it is a truncated branch-and-bound, not an exhaustive search.
+
+---
+
+## 4. Stage II: Solver Co-Design
+
+The solvers below were written by Gemini in conversation with the first author, who ran each one in Colab, reported the results, and asked for revisions. They are not outputs of the Stage I loop. The local-search solvers combine the Generation-4 bound with the OEIS bound.
+
+| Step | Solver | Start | Result |
+|:--|:--|:--|:--|
+| A | Fixed-endpoint beam search + 1-opt hill climbing | From scratch | n = 9, 10, 11 reach 32, 40, 49; n = 12–14 reach 57, 67, 78 (one short); **n = 15 reaches 90 (first occurrence, 5.93 s)** |
+| B | Simulated annealing with 1-opt / 2-opt moves | Seeds from A | No improvement at n = 12–15 |
+| C | Exact LNS, k = 3–4, right endpoint not fixed | Seeds from A | **a(12) = 58 in 2.20 s** |
+| D | Tabu LNS, k = 4–5 | Seeds from A | **a(13) = 68 in 4.42 s** |
+| E | Deep LNS, k = 5–6, three removal modes, diverse seed pool | Seeds from A | **a(14) = 79 in 8.31 s** |
+| F | Multi-family randomized beam search + exact k = 4 repair | From scratch, no seeds | 45 s: 8 literally distinct 90-point configurations |
+| G | Explorer F with reflection-canonical deduplication and a rescoring audit (Section 7.1) | From scratch | **600 s run by W. Gu: a(15) ≥ 91, 2 families, `bad = 0`** |
+
+Simulated annealing and 1-opt moves did not get past the 1-point-short plateaus at n = 12–14. Large-neighbourhood moves that removed 3–6 elements at once (and, for n = 12, freed the right endpoint) did.
+
+---
+
+## 5. Results
+
+### 5.1 Known values, n = 9–14
+
+| n | m | OEIS | Reached | Start | Solver, time | Witness | Steps |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| 9 | 36 | 32 | 32 | scratch | A, 0.21 s | `[0, 1, 3, 13, 20, 27, 31, 35, 36]` | `[1, 2, 10, 7, 7, 4, 4, 1]` |
+| 10 | 45 | 40 | 40 | scratch | A, 0.32 s | `[0, 1, 7, 11, 15, 24, 40, 42, 43, 45]` | `[1, 6, 4, 4, 9, 16, 2, 1, 2]` |
+| 11 | 55 | 49 | 49 | scratch | A, 0.51 s | `[0, 1, 2, 6, 17, 25, 33, 43, 46, 53, 55]` | `[1, 1, 4, 11, 8, 8, 10, 3, 7, 2]` |
+| 12 | 66 | 58 | 58 | warm (57) | C, 2.20 s | `[0, 1, 2, 6, 17, 26, 35, 44, 56, 58, 63, 66]` | `[1, 1, 4, 11, 9, 9, 9, 12, 2, 5, 3]` |
+| 13 | 78 | 68 | 68 | warm (67) | D, 4.42 s | `[0, 1, 2, 12, 13, 29, 33, 48, 55, 64, 70, 73, 78]` | `[1, 1, 10, 1, 16, 4, 15, 7, 9, 6, 3, 5]` |
+| 14 | 91 | 79 | 79 | warm (78) | E, 8.31 s; 1/4 runs in 30 s (median 78) | `[0, 1, 4, 11, 24, 29, 42, 55, 74, 76, 82, 88, 90, 91]` | `[1, 3, 7, 13, 5, 13, 13, 19, 2, 6, 6, 2, 1]` |
+
+Times are single Colab runs and are machine-dependent.
+
+### 5.2 a(15) ≥ 91
+
+| Family | Witness A (\|A\| = 15, max 105, 91 distinct differences) | Steps | Missing differences (14) |
+|:--|:--|:--|:--|
+| 91-1 | `[0, 3, 4, 13, 29, 40, 51, 62, 73, 85, 90, 97, 103, 104, 105]` | `[3, 1, 9, 16, 11, 11, 11, 11, 12, 5, 7, 6, 1, 1]` | 21, 55, 66, 67, 71, 78, 79, 80, 83, 88, 89, 95, 96, 98 |
+| 91-2 | `[0, 2, 6, 15, 17, 29, 39, 49, 59, 69, 79, 97, 100, 104, 105]` | `[2, 4, 9, 2, 12, 10, 10, 10, 10, 10, 18, 3, 4, 1]` | 16, 19, 60, 70, 72, 74, 78, 81, 84, 86, 92, 93, 96, 101 |
+
+The reflection of 91-1 under x ↦ 105 − x is `[0, 1, 2, 8, 15, 20, 32, 43, 54, 65, 76, 92, 101, 102, 105]`, which differs from 91-2, so the two witnesses are non-isomorphic.
+
+### 5.3 Configurations with 90 distinct differences at n = 15
+
+| Family | Config | Subset | Steps |
+|:--|:--|:--|:--|
+| A | #0 | `[0, 1, 8, 12, 26, 43, 44, 51, 71, 81, 84, 90, 100, 103, 105]` | `[1, 7, 4, 14, 17, 1, 7, 20, 10, 3, 6, 10, 3, 2]` |
+| B | #1 | `[0, 4, 8, 9, 19, 30, 42, 58, 65, 71, 78, 85, 102, 103, 105]` | `[4, 4, 1, 10, 11, 12, 16, 7, 6, 7, 7, 17, 1, 2]` |
+| C | #2 | `[0, 1, 2, 4, 6, 21, 33, 45, 57, 71, 80, 87, 94, 97, 105]` | `[1, 1, 2, 2, 15, 12, 12, 12, 14, 9, 7, 7, 3, 8]` |
+| D | #3 | `[0, 1, 5, 15, 28, 40, 52, 64, 76, 83, 85, 94, 96, 102, 105]` | `[1, 4, 10, 13, 12, 12, 12, 12, 7, 2, 9, 2, 6, 3]` |
+| D (mirror) | #6 | `[0, 3, 9, 11, 20, 22, 29, 41, 53, 65, 77, 90, 100, 104, 105]` | `[3, 6, 2, 9, 2, 7, 12, 12, 12, 12, 13, 10, 4, 1]` |
+| E | #4 | `[0, 2, 3, 5, 14, 16, 38, 48, 58, 75, 79, 97, 98, 104, 105]` | `[2, 1, 2, 9, 2, 22, 10, 10, 17, 4, 18, 1, 6, 1]` |
+| F | #5 | `[0, 4, 6, 8, 31, 34, 47, 50, 66, 83, 84, 90, 95, 104, 105]` | `[4, 2, 2, 23, 3, 13, 3, 16, 17, 1, 6, 5, 9, 1]` |
+| G | #7 | `[0, 1, 4, 10, 27, 28, 39, 53, 58, 69, 83, 90, 98, 103, 105]` | `[1, 3, 6, 17, 1, 11, 14, 5, 11, 14, 7, 8, 5, 2]` |
+| H | #8 | `[0, 2, 7, 18, 23, 31, 42, 50, 67, 75, 89, 95, 101, 104, 105]` | `[2, 5, 11, 5, 8, 11, 8, 17, 8, 14, 6, 6, 3, 1]` |
+
+Config #0 came from solver A; #1–#8 from solver F. Solver F deduplicated only identical subsets, which is why the mirror pair #3/#6 appears twice; the reflection check was done afterwards.
+
+### 5.4 Observation: arithmetic runs in the middle
+
+Several high-scoring subsets contain a run of equal steps in the middle: 91-2 has five steps of 10 (`29, 39, 49, 59, 69, 79`), 91-1 has four steps of 11, and the 90-point configurations #3/#6 have four steps of 12. In these subsets the repeated differences produced by the run are produced only inside the run:
+
+| Subset | Run | Step | Excess collisions in the whole set | Collisions inside the run | Run's differences appear outside the run? |
+|:--|:--|:--|:--|:--|:--|
+| 91-2 | 29, 39, 49, 59, 69, 79 | 10 | 14 | 10 | No |
+| 91-1 | 29, 40, 51, 62, 73 | 11 | 14 | 6 | No |
+| 90 #3 | 28, 40, 52, 64, 76 | 12 | 15 | 6 | No |
+| 90 #2 | 21, 33, 45, 57 | 12 | 15 | 3 | No |
+
+("Excess collisions" = 105 pairs minus the number of distinct differences.)
+
+This suggests a hypothesis: high-scoring subsets may concentrate part of the unavoidable collisions inside a middle arithmetic run. **This is a descriptive observation, not an established structural law.** For comparison, W. Gu estimates that such runs occur in about 0.48% of random subsets and about 5% of high-scoring local optima; only two 91-point witnesses are known, so no statistical claim is made.
+
+---
+
+## 6. Standalone Verification Script
+
+Run with `python3 -I verify.py`. It checks every subset above, prints steps and missing differences, and counts non-isomorphic families.
 
 ```python
 def verify_and_analyze(n, subset, label=""):
@@ -122,7 +184,7 @@ if __name__ == "__main__":
         fams_91.add(min(steps, tuple(reversed(steps))))
     print(f"--> Confirmed {len(a15_91_configs)} configurations for a(15) >= 91 spanning {len(fams_91)} non-isomorphic families.\n")
 
-    print("=== PART 3: Sub-optimal Tier a(15) = 90 (9 Configs, 8 Non-Isomorphic Families) ===")
+    print("=== PART 3: 90-Point Configurations for n = 15 (9 Configs, 8 Non-Isomorphic Families) ===")
     a15_90_configs = [
         [0, 1, 8, 12, 26, 43, 44, 51, 71, 81, 84, 90, 100, 103, 105], # #0
         [0, 4, 8, 9, 19, 30, 42, 58, 65, 71, 78, 85, 102, 103, 105],  # #1
@@ -136,18 +198,156 @@ if __name__ == "__main__":
     ]
     fams_90 = set()
     for i, cfg in enumerate(a15_90_configs):
-        steps = verify_and_analyze(15, cfg, f"a(15)=90 Config #{i}")
+        steps = verify_and_analyze(15, cfg, f"n=15 90-pt Config #{i}")
         canonical_rep = min(steps, tuple(reversed(steps)))
         if canonical_rep in fams_90:
             print(f"   [Isomorphism Note] Config #{i} is a reflection-symmetric twin (105 - x) of an earlier configuration.\n")
         fams_90.add(canonical_rep)
 
-    print(f"=== Summary: Verified {len(fams_91)} non-isomorphic families for a(15) >= 91, and {len(fams_90)} non-isomorphic families for a(15) = 90. ===")
+    print(f"=== Summary: Verified {len(fams_91)} non-isomorphic families for a(15) >= 91, and {len(fams_90)} non-isomorphic families at 90 points. ===")
 ```
 
 ---
 
-## 6. Reproducible Search Methodology: Open-Source Exact-LNS & Beam Solver (with `bad = 0` Audit)
+## 7. Search Code
+
+### 7.1 Multi-family explorer (the code that produced a(15) ≥ 91)
+
+This is the explorer W. Gu ran for 600 seconds (1,052 trials) to obtain the two 91-point witnesses (he added the rescoring counter to the earlier version; it is merged here). It includes reflection-canonical deduplication and a from-scratch rescoring audit (`bad`). Results are random; a single run may or may not reach 91.
+
+```python
+import time
+import random
+
+def get_mask_and_score(sub):
+    mask = 0
+    L = len(sub)
+    for i in range(L):
+        si = sub[i]
+        for j in range(i + 1, L):
+            mask |= (1 << abs(si - sub[j]))
+    return mask, mask.bit_count()
+
+def exact_rescore_set(sub):
+    """Independent from-scratch set difference evaluator to audit bitmask scores."""
+    return len({abs(a - b) for a in sub for b in sub if a != b})
+
+def get_canonical_step_signature(sub):
+    """Returns reflection-invariant canonical step tuple under x -> m - x."""
+    steps = tuple(sub[i+1] - sub[i] for i in range(len(sub) - 1))
+    rev_steps = tuple(reversed(steps))
+    return min(steps, rev_steps)
+
+def multi_family_a15_explorer(max_time_sec=600):
+    """
+    In a 600-second run (1,052 trials), discovers 2 non-isomorphic families achieving
+    a(15) >= 91 with bad = 0 (zero discrepancy between bitmask and set rescoring).
+    """
+    n, N = 15, 105
+    start_time = time.time()
+    best_score = 0
+    all_extremal_configs = []
+    non_isomorphic_families = {}
+    trials = 0
+    bad = 0  # Counter for any scoring discrepancy
+
+    while time.time() - start_time < max_time_sec:
+        trials += 1
+        edge_weight = random.uniform(0.5, 4.0)
+        noise_level = random.uniform(0.1, 1.2)
+        beam_width = 350
+
+        beam = [(1, N, 1 << N, (0, N))]
+        for step in range(n - 2):
+            next_beam = []
+            visited = set()
+            for sc, _, mask, sub in beam:
+                sub_set = set(sub)
+                avail = [y for y in range(1, N) if y not in sub_set]
+                for y in random.sample(avail, min(len(avail), 65)):
+                    new_sub = tuple(sorted(sub + (y,)))
+                    if new_sub in visited:
+                        continue
+                    visited.add(new_sub)
+                    add_m = 0
+                    for x in sub:
+                        add_m |= (1 << abs(y - x))
+                    nm = mask | add_m
+                    nsc = nm.bit_count()
+                    prio = nsc * 100 + abs(y - N / 2.0) * edge_weight + random.uniform(0, noise_level * 100)
+                    next_beam.append((prio, nsc, nm, new_sub))
+            next_beam.sort(key=lambda x: x[0], reverse=True)
+            beam = [(x[1], 0, x[2], x[3]) for x in next_beam[:beam_width]]
+
+        for sc, _, mask, sub_tuple in beam[:5]:
+            curr_sub = list(sub_tuple)
+            curr_sc = sc
+            for _ in range(40):
+                kept = sorted(random.sample(range(1, n), n - 5))
+                base = [0] + [curr_sub[i] for i in kept]
+                base_set = set(base)
+                bm, _ = get_mask_and_score(base)
+                cands = []
+                for y in range(1, N + 1):
+                    if y in base_set:
+                        continue
+                    ym = 0
+                    for x in base:
+                        ym |= (1 << abs(y - x))
+                    cands.append(((ym & ~bm).bit_count(), abs(y - N / 2.0), y, ym))
+                cands.sort(reverse=True)
+                cands = cands[:28]
+                cy = [c[2] for c in cands]; cm = [c[3] for c in cands]; cg = [c[0] for c in cands]
+                L_c = len(cy)
+                b_sc = curr_sc; b_add = None
+
+                def dfs4(st, m, last_i, add):
+                    nonlocal b_sc, b_add
+                    cs = m.bit_count()
+                    if st == 4:
+                        if cs >= b_sc and sorted(base + add) != curr_sub:
+                            b_sc = cs; b_add = add.copy()
+                        return
+                    rem = 4 - st
+                    if cs + rem * (11 + st) + rem * (rem - 1) // 2 < b_sc:
+                        return
+                    for i in range(last_i + 1, L_c - rem + 1):
+                        if cs + rem * cg[i] + rem * (rem - 1) // 2 < b_sc:
+                            break
+                        y = cy[i]; nm = m | cm[i]
+                        for py in add:
+                            nm |= (1 << abs(y - py))
+                        add.append(y); dfs4(st + 1, nm, i, add); add.pop()
+
+                dfs4(0, bm, -1, [])
+                if b_add is not None:
+                    curr_sub = sorted(base + b_add)
+                    curr_sc = b_sc
+
+            # Independent rescoring audit (bad = 0 check)
+            true_sc = exact_rescore_set(curr_sub)
+            if true_sc != curr_sc or len(curr_sub) != n or curr_sub[0] != 0 or curr_sub[-1] > N:
+                bad += 1
+                continue
+
+            if curr_sc > best_score:
+                best_score = curr_sc
+                all_extremal_configs = [curr_sub]
+                non_isomorphic_families = {get_canonical_step_signature(curr_sub): curr_sub}
+            elif curr_sc == best_score:
+                if curr_sub not in all_extremal_configs:
+                    all_extremal_configs.append(curr_sub)
+                sig = get_canonical_step_signature(curr_sub)
+                if sig not in non_isomorphic_families:
+                    non_isomorphic_families[sig] = curr_sub
+
+    print(f"[Explorer Finished] Trials={trials} | Best={best_score} | Families={len(non_isomorphic_families)} | bad={bad}")
+    return best_score, trials, bad, all_extremal_configs, list(non_isomorphic_families.values())
+```
+
+### 7.2 Simplified reference LNS solver
+
+A compact reimplementation of the beam-plus-LNS approach, provided for readers who want a short, self-contained example. **It is not the code that produced the results in Section 5.** Measured with `seed=42`: n = 9 reached 32 in 0.07 s, n = 10 reached 40 in 0.37 s, n = 11 reached 49 in 11.8 s, and n = 12 reached 57 (not 58) within 20 s.
 
 ```python
 import random
@@ -267,15 +467,39 @@ def solve_a397960_lns(n, target_score=None, time_limit=15.0, seed=42):
     return best_score, best_sub
 
 if __name__ == "__main__":
-    for n_test, target in [(9, 32), (10, 40), (11, 49), (12, 58)]:
-        solve_a397960_lns(n_test, target_score=target, time_limit=10.0)
+    # Measured with seed=42 (see README): n=9..11 reach the OEIS values; n=12 reached 57 (not 58) within 20 s.
+    for n_test, target in [(9, 32), (10, 40), (11, 49)]:
+        solve_a397960_lns(n_test, target_score=target, time_limit=20.0)
 ```
 
 ---
 
-## 7. Open-Source License & Collaboration Notice
+## 8. Provenance of Each Result
 
-- **Code License (MIT License):** All verification and search algorithm scripts in this repository are released under the open-source MIT License.
-- **Data & Documentation License (CC BY 4.0):** Constructive witness subsets and structural analyses are licensed under CC BY 4.0. Please attribute both Wujie Gu (author of OEIS A397960 and 600s verification of $a(15) \ge 91$) and Chien-Cheng Dennis Lin (PSS co-evolutionary solver and mid-ruler arithmetic progression analysis) when citing.
+| Result | Produced by | Run by |
+|:--|:--|:--|
+| Generations 0–4 | Stage I loop, `gemini-3.1-pro-preview` | D. Lin (Colab) |
+| n = 9–11, first a(15) = 90 | Solver A | D. Lin (Colab) |
+| n = 12 / 13 / 14 | Solvers C / D / E | D. Lin (Colab) |
+| 8 non-isomorphic 90-point families | Solvers A and F | D. Lin (Colab) |
+| a(15) ≥ 91 (2 families) | Solver G (Section 7.1) | W. Gu (isolated container, `python3 -I`) |
+| Equivalence of the pruning bound | Comparison with OEIS PROG | W. Gu |
 
-© 2026 Chien-Cheng Dennis Lin (Symbiosis Lab) & Wujie Gu. Released under MIT License & CC BY 4.0.
+---
+
+## 9. Citation and License
+
+- Code: MIT License. Data and documentation: CC BY 4.0.
+- Please cite the sequence as: Wujie Gu, Sequence A397960, The On-Line Encyclopedia of Integer Sequences, https://oeis.org/A397960.
+- When citing this repository, please credit both W. Gu (sequence author; independent verification and the 600 s run establishing a(15) ≥ 91) and C.-C. D. Lin (evolution experiments, solver development and structural analysis).
+
+© 2026 Chien-Cheng Dennis Lin (Symbiosis Lab) and Wujie Gu.
+
+---
+
+## Revision Log
+
+| Version | Date | Changes |
+|:--|:--|:--|
+| V1.3 | 2026-10-16 | Added a(15) ≥ 91 (2 families) and the four peer-review revisions. |
+| V1.4 | 2026-10-16 | Corrected the description to match the original Colab records: (1) the evolution model was `gemini-3.1-pro-preview`, not Gemini 2.5 Flash; (2) removed the claim that failed instances received a 0-point penalty, which was not part of the run; (3) stated that the feedback included known optima and that prompts suggested directions, replacing "blind test" and "autonomously derived"; (4) separated Stage I (evolution) from Stage II (human–AI solver co-design) and attributed each result to the solver that produced it; (5) split the reproduction table into from-scratch (n = 9–11) and warm-start (n = 12–14), and changed "n = 3–14" to "n = 4–14"; (6) replaced the claim that the mid-ruler runs were "confirmed" with a descriptive observation plus a collision table; (7) added the non-monotonicity caveat to the φ extrapolation; (8) relabelled the 90-point tier, since a(15) = 90 is no longer a candidate value; (9) added the exact multi-family explorer that produced a(15) ≥ 91 and labelled the short LNS solver as a reference reimplementation with measured performance; (10) added an AI-use disclosure and a provenance table. |
