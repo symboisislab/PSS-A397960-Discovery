@@ -121,7 +121,7 @@ The researcher worked with Gemini 4 Argon in the Gemini web app. The model wrote
 The step that mattered was going from small moves (1-opt, annealing) to large moves. Pulling out 3–6 points at once and refilling them exactly got past the plateaus that were one point short.
 
 **Stage III: verification.**
-Every subset in this repository was rescored by independent code. W. Gu also confirmed that the 9 configurations with 90 differences are valid, and that two of them are mirror images.
+Every subset in this repository was rescored by independent code. W. Gu also confirmed that the 9 configurations with 90 differences are valid, and that two of them are mirror images. A later review by W. Gu found that one part of an earlier collision analysis was simple arithmetic rather than evidence, and that its causal reading was backwards. The corrected reading is the one given below.
 
 The per-result details (code version, start condition, run times) are in [readme_EN.md §8](readme_EN.md).
 
@@ -153,14 +153,16 @@ The first author is not a specialist in combinatorics. Part of what this reposit
 
 ## An observation: arithmetic runs in the middle
 
-Both 91-point subsets contain a run of equal steps in the middle.
+Both 91-point subsets contain a run of equal steps in the middle:
 
 ```
-91-2:  0 2 6 15 17 │29 39 49 59 69 79│ 97 100 104 105     five steps of 10
-91-1:  0 3 4 13 │29 40 51 62 73│ 85 90 97 103 104 105    four steps of 11
+91-2:  0 2 6 15 17 │29 39 49 59 69 79│ 97 100 104 105     six marks, step 10
+91-1:  0 3 4 13 │29 40 51 62 73│ 85 90 97 103 104 105    five marks, step 11
 ```
 
-The differences produced by each run do not reappear elsewhere in the set. This suggests a possible pattern: good subsets may place part of their unavoidable repeated differences inside one middle run, which frees the two ends to cover many differences. **We treat this as a hypothesis, not a result.** Only two 91-point subsets are known. As a rough baseline, W. Gu estimates that such runs occur in about 0.48% of random subsets and about 5% of high-scoring local optima. Details and a collision count are in [readme_EN.md §5.4](readme_EN.md).
+This is surprising because an arithmetic run is the most wasteful shape possible. A run of k marks has C(k,2) pairs but only k − 1 distinct differences. In 91-2 the run uses 6 of the 15 marks (40%), and by itself it accounts for 10 of the set's 14 repeated differences (71%). The set still matches the best value known. So the marks at the two ends must be making up for this cost, and **how they do so is an open question.** It can be tested directly: fix the run, search only the ends, and see whether that finds high scores faster than unconstrained search.
+
+**We treat this as a hypothesis, not a result.** Only two 91-point subsets are known. Details are in [readme_EN.md §5.4](readme_EN.md).
 
 ---
 
@@ -196,7 +198,7 @@ Solvers A–F and the Stage I loop with its prompts will be released with the ac
 ## Open questions
 
 1. **Is a(15) = 91?** Proving it needs an exhaustive search, for example a sharded run of the OEIS branch-and-bound.
-2. **Is the middle arithmetic run a real structural feature?** One test: search with the run imposed and see whether the scores improve.
+2. **Is the middle arithmetic run usable structure, or a by-product?** Fix a run of step Δ and length k, search only the ends, and compare against unconstrained search under the same time budget, sweeping Δ = 10–12 and k = 4–6.
 3. **How much did the protocol prompt matter?** The planned test runs Stage I with and without the Project Soul Seed constraints, and with and without known-optimum feedback, several times each.
 4. **Does the method reach n = 16** (m = 120)?
 
@@ -262,3 +264,4 @@ Code: MIT License. Data and documentation: CC BY 4.0. © 2026 Chien-Cheng Dennis
 |:--|:--|:--|
 | V1.0 | 2026-10-14 | First landing page (a(15) ≥ 90; Gemini 2.5 Flash; "9 non-isomorphic families"). |
 | **V2.0** | 2026-10-16 | Rewritten as a full landing page, aligned with readme_EN / README_ZH V1.4 r3. (1) Result updated to a(15) ≥ 91 with both witnesses and their missing differences. (2) Corrected the model name (`gemini-3.1-pro-preview` / Gemini 4 Argon), the family count (8 families among 9 configurations at 90), and "exact reproduction of a(3)…a(14)" (now from-scratch n = 9–11 vs. warm-start n = 12–14). (3) Removed "hallucination-free" and "bi-level closed loop", which described the system inaccurately. (4) Added: a one-minute problem explanation, a 5-line check, a stage diagram, a solver path including failures, a who-did-what table, a claims / non-claims table, the observation section, repository contents, timeline, open questions, citation, AI disclosure and a Chinese summary. |
+| V2.1 | 2026-10-16 | Following W. Gu's addendum (V1.1): rewrote the observation section around the cost of the arithmetic run (the run creates its own collisions; the earlier "concentrates collisions" reading reversed the causality). Removed the 0.48% / 5% baselines until they are recomputed under a fixed rule. Sharpened open question 2 into a testable experiment. Updated readme_EN / README_ZH to V1.4 r4. |
