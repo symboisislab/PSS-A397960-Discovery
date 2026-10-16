@@ -9,7 +9,7 @@
 
 > **Status in one line.** We give two explicit 15-element subsets of {0, …, 105} with 91 distinct positive differences each, so **a(15) ≥ 91** (a constructive lower bound, not a proof of optimality). Both witnesses were independently rescored from scratch by W. Gu in an isolated container.
 
-> **AI use disclosure.** All search code in this repository was written by Google Gemini models, either inside an automated evolution loop (`gemini-3.1-pro-preview`) or in conversational sessions with the first author in Google Colab (exact model version to be confirmed). The authors ran the code, inspected the results and directed revisions. All reported subsets were verified by independent code. 
+> **AI use disclosure.** All search code in this repository was written by Google Gemini models, either inside an automated evolution loop (`gemini-3.1-pro-preview`) or in conversations between the first author and Gemini 4 Argon through the Gemini web app (October 2026), with the resulting code run by the first author in Google Colab. The authors ran the code, inspected the results and directed revisions. All reported subsets were verified by independent code. This README was revised with the assistance of Claude (Anthropic) under the authors' Project Soul Seed / Symbiosis Protocol, and was reviewed by the authors before publication.
 
 ---
 
@@ -20,7 +20,7 @@ The work proceeded in three stages of different character. We report them separa
 | Stage | What happened | Who produced the code | Uses known answers? |
 |:--|:--|:--|:--|
 | I. Program evolution | An LLM rewrote a scoring heuristic for 4 generations, evaluated on n = 4–8 | Automated loop (`gemini-3.1-pro-preview`) | **Yes**: the feedback to the model included the known optimum for each n |
-| II. Solver co-design | Beam search, local search and large-neighbourhood search solvers were written and revised over several rounds | The first author in conversation with Gemini | n = 12–14: known values used as stopping targets. n = 15: no known value exists |
+| II. Solver co-design | Beam search, local search and large-neighbourhood search solvers were written and revised over several rounds | The first author in conversation with Gemini 4 Argon | n = 12–14: known values used as stopping targets. n = 15: no known value exists |
 | III. Verification | Every reported subset was rescored by independent code; the a(15) ≥ 91 run was performed by W. Gu in an isolated container | W. Gu, authors | No |
 
 **Main results**
@@ -33,7 +33,7 @@ The work proceeded in three stages of different character. We report them separa
 
 ## 2. Scope and Caveats
 
-1. **Known answers guided Stage I.** The evolution loop reported each candidate's score together with the known optimum (for example, "n=4: 6 points (optimum 6)"), and the generation-0 history included an example optimal subset {0, 1, 4, 6}. The selection pressure was therefore guided by known values. The prompts contained no branch-and-bound code, but they did suggest directions (collision penalties, distance to the boundary, adapting to the number of remaining steps). The full prompts are given in the private vault and will be released with the accompanying paper.
+1. **Known answers guided Stage I.** The evolution loop reported each candidate's score together with the known optimum (for example, "n=4: 6 points (optimum 6)"), and the generation-0 history included an example optimal subset {0, 1, 4, 6}. The selection pressure was therefore guided by known values. The prompts contained no branch-and-bound code, but they did suggest directions (collision penalties, distance to the boundary, adapting to the number of remaining steps). The Stage I system prompt and user-prompt template are part of the evolution-loop code and will be released in full with the accompanying paper. Selected excerpts of the Stage II conversations will be released as well, and the full transcripts are available from the authors on reasonable request.
 2. **Stage I was run once.** We have no distribution over repeated runs, and no ablation of the system prompt.
 3. **n = 12–14 were warm starts.** These values were reached from seeds scoring 57, 67 and 78 (one below each record), with the record used as the stopping target, by three different solvers. In an independent test, the solver that reached a(14) = 79 did so in 1 of 4 runs of 30 seconds (median 78).
 4. **A lower bound, not an optimality proof.** a(15) ≤ 91 has not been established. As a heuristic only: the density ratio φ(n) = a(n)/m decreases for n = 11–14 (0.8909, 0.8788, 0.8718, 0.8681), with differences shrinking roughly by half each step, and extrapolating gives φ(15) ≈ 0.866, i.e. about 90.9. This is consistent with 91, but φ is not monotone over all n (it increases from n = 6 to n = 8), so this is not evidence of optimality.
@@ -68,7 +68,7 @@ The OEIS values are 6, 9, 13, 19, 26 (total 73). Generation 1 scored 19 at n = 7
 
 ## 4. Stage II: Solver Co-Design
 
-The solvers below were written by Gemini in conversation with the first author, who ran each one in Colab, reported the results, and asked for revisions. They are not outputs of the Stage I loop. The local-search solvers combine the Generation-4 bound with the OEIS bound.
+The solvers below were written by Gemini 4 Argon (Gemini web app) in conversation with the first author, who ran each one in Colab, reported the results, and asked for revisions. They are not outputs of the Stage I loop. The local-search solvers combine the Generation-4 bound with the OEIS bound.
 
 | Step | Solver | Start | Result |
 |:--|:--|:--|:--|
@@ -503,3 +503,5 @@ if __name__ == "__main__":
 |:--|:--|:--|
 | V1.3 | 2026-10-16 | Added a(15) ≥ 91 (2 families) and the four peer-review revisions. |
 | V1.4 | 2026-10-16 | Corrected the description to match the original Colab records: (1) the evolution model was `gemini-3.1-pro-preview`, not Gemini 2.5 Flash; (2) removed the claim that failed instances received a 0-point penalty, which was not part of the run; (3) stated that the feedback included known optima and that prompts suggested directions, replacing "blind test" and "autonomously derived"; (4) separated Stage I (evolution) from Stage II (human–AI solver co-design) and attributed each result to the solver that produced it; (5) split the reproduction table into from-scratch (n = 9–11) and warm-start (n = 12–14), and changed "n = 3–14" to "n = 4–14"; (6) replaced the claim that the mid-ruler runs were "confirmed" with a descriptive observation plus a collision table; (7) added the non-monotonicity caveat to the φ extrapolation; (8) relabelled the 90-point tier, since a(15) = 90 is no longer a candidate value; (9) added the exact multi-family explorer that produced a(15) ≥ 91 and labelled the short LNS solver as a reference reimplementation with measured performance; (10) added an AI-use disclosure and a provenance table. |
+| V1.4 r2 | 2026-10-16 | Named the model used in the Stage II conversations (Gemini 4 Argon) in the AI-use disclosure, Section 1 and Section 4. |
+| V1.4 r3 | 2026-10-16 | Corrected the Stage II setting: the conversations took place in the Gemini web app, not in Colab (Colab was used only to run the code). Specified that the Stage I prompts will be released in full and the Stage II conversations as labelled excerpts, with full transcripts available on request. |
