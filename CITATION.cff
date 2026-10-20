@@ -7,8 +7,17 @@ authors:
     affiliation: "National Chung Hsing University"
   - family-names: Gu
     given-names: Wujie
+    affiliation: "Independent researcher, Melbourne, Australia"
 date-released: 2026-10-16
 url: "https://github.com/symboisislab/PSS-A397960-Discovery"
+repository-code: "https://github.com/symboisislab/PSS-A397960-Discovery"
+identifiers:
+  - type: url
+    value: "https://github.com/symboisislab/PSS-A397960-Discovery"
+    description: "Code and data repository"
+  - type: url
+    value: "https://oeis.org/A397960"
+    description: "OEIS entry A397960"
 license: MIT
 keywords: [OEIS, A397960, distinct differences, Golomb ruler, large neighborhood search, LLM]
 references:
