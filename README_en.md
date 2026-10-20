@@ -145,7 +145,7 @@ Several high-scoring subsets contain a run of equal steps in the middle: 91-2 ha
 
 ## 6. Standalone Verification Script
 
-Run with `python3 -I verify.py`. It checks every subset above, prints steps and missing differences, and counts non-isomorphic families.
+Run with `python3 -I verify.py`. It checks every subset above, prints steps and missing differences, and counts non-isomorphic families. Each subset is compared with the number of distinct differences it is claimed to attain; if any count does not match, the script stops with exit status 1 (this check also runs under `python -O`).
 
 ```python
 def verify_and_analyze(n, subset, label=""):
@@ -508,3 +508,4 @@ if __name__ == "__main__":
 | V1.4 r2 | 2026-10-16 | Named the model used in the Stage II conversations (Gemini 4 Argon) in the AI-use disclosure, Section 1 and Section 4. |
 | V1.4 r3 | 2026-10-16 | Corrected the Stage II setting: the conversations took place in the Gemini web app, not in Colab (Colab was used only to run the code). Specified that the Stage I prompts will be released in full and the Stage II conversations as labelled excerpts, with full transcripts available on request. |
 | V1.4 r4 | 2026-10-16 | Following W. Gu's addendum (V1.1): (1) Section 5.4 rewritten. The "collisions inside the run" column is shown as C(k,2) − (k−1), which is determined by the run length, and a "left for all other pairs" column is added. The earlier wording that high-scoring sets "concentrate collisions inside the run" reversed the causality and is replaced by the cost question and a testable experiment. The 0.48% / 5% baselines are removed until they are recomputed under a fixed rule. (2) Section 2 and Table 5.1: the 1-in-4 result for n = 14 was obtained from the solver's own seed pool, not from the 78-point seed. |
+| V1.4 r5 | 2026-10-19 | Following W. Gu's review (2026-10-19): §6 notes that `verify.py` now compares every count with its claimed value and exits with status 1 on a mismatch. File renamed from `readme_EN.md` to `README.en.md`. |
