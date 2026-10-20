@@ -8,7 +8,7 @@
 [![Data: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-lightgrey)](#license)
 
 **Authors:** Chien-Cheng Dennis Lin (Symbiosis Lab / Project Soul Seed) · Wujie (Gavin) Gu (author of OEIS A397960)
-**Full documentation:** [English (readme_EN.md)](readme_EN.md) · [繁體中文 (README_ZH.md)](README_ZH.md)
+**Full documentation:** [English (README.en.md)](README.en.md) · [繁體中文 (README_ZH.md)](README_ZH.md)
 
 > **Status.** a(15) ≥ 91 is a **constructive lower bound**. It is not a proof that a(15) = 91. Whether 92 is possible is still open.
 
@@ -74,7 +74,7 @@ for S in ([0,3,4,13,29,40,51,62,73,85,90,97,103,104,105],
     print(len({b - a for a in S for b in S if b > a}))   # prints 91
 ```
 
-For the full check, run [`verify.py`](verify.py). It covers all witnesses for n = 9–15, steps, missing differences and the mirror test.
+For the full check, run [`verify.py`](verify.py). It covers all witnesses for n = 9–15, steps, missing differences and the mirror test. Every count is compared with the value it is claimed to attain; on any mismatch the script stops with exit status 1.
 
 ```bash
 python3 -I verify.py
@@ -123,7 +123,7 @@ The step that mattered was going from small moves (1-opt, annealing) to large mo
 **Stage III: verification.**
 Every subset in this repository was rescored by independent code. W. Gu also confirmed that the 9 configurations with 90 differences are valid, and that two of them are mirror images. A later review by W. Gu found that one part of an earlier collision analysis was simple arithmetic rather than evidence, and that its causal reading was backwards. The corrected reading is the one given below.
 
-The per-result details (code version, start condition, run times) are in [readme_EN.md §8](readme_EN.md).
+The per-result details (code version, start condition, run times) are in [README.en.md §8](README.en.md).
 
 ---
 
@@ -162,7 +162,7 @@ Both 91-point subsets contain a run of equal steps in the middle:
 
 This is surprising because an arithmetic run is the most wasteful shape possible. A run of k marks has C(k,2) pairs but only k − 1 distinct differences. In 91-2 the run uses 6 of the 15 marks (40%), and by itself it accounts for 10 of the set's 14 repeated differences (71%). The set still matches the best value known. So the marks at the two ends must be making up for this cost, and **how they do so is an open question.** It can be tested directly: fix the run, search only the ends, and see whether that finds high scores faster than unconstrained search.
 
-**We treat this as a hypothesis, not a result.** Only two 91-point subsets are known. Details are in [readme_EN.md §5.4](readme_EN.md).
+**We treat this as a hypothesis, not a result.** Only two 91-point subsets are known. Details are in [README.en.md §5.4](README.en.md).
 
 ---
 
@@ -171,7 +171,7 @@ This is surprising because an arithmetic run is the most wasteful shape possible
 | Path | What it is |
 |:--|:--|
 | `README.md` | This page |
-| [`readme_EN.md`](readme_EN.md) / [`README_ZH.md`](README_ZH.md) | Full documentation: all tables, stage details, caveats, provenance |
+| [`README.en.md`](README.en.md) / [`README_ZH.md`](README_ZH.md) | Full documentation: all tables, stage details, caveats, provenance |
 | [`verify.py`](verify.py) | Zero-dependency verification of every witness (n = 9–15) |
 | [`solvers/multi_family_explorer.py`](solvers/multi_family_explorer.py) | **The exact code that produced a(15) ≥ 91** (solver G) |
 | [`solvers/reference_lns.py`](solvers/reference_lns.py) | A short reference re-implementation of the LNS idea, for reading. *Not the code that produced the results*; measured performance is in its header |
@@ -265,3 +265,4 @@ Code: MIT License. Data and documentation: CC BY 4.0. © 2026 Chien-Cheng Dennis
 | V1.0 | 2026-10-14 | First landing page (a(15) ≥ 90; Gemini 2.5 Flash; "9 non-isomorphic families"). |
 | **V2.0** | 2026-10-16 | Rewritten as a full landing page, aligned with readme_EN / README_ZH V1.4 r3. (1) Result updated to a(15) ≥ 91 with both witnesses and their missing differences. (2) Corrected the model name (`gemini-3.1-pro-preview` / Gemini 4 Argon), the family count (8 families among 9 configurations at 90), and "exact reproduction of a(3)…a(14)" (now from-scratch n = 9–11 vs. warm-start n = 12–14). (3) Removed "hallucination-free" and "bi-level closed loop", which described the system inaccurately. (4) Added: a one-minute problem explanation, a 5-line check, a stage diagram, a solver path including failures, a who-did-what table, a claims / non-claims table, the observation section, repository contents, timeline, open questions, citation, AI disclosure and a Chinese summary. |
 | V2.1 | 2026-10-16 | Following W. Gu's addendum (V1.1): rewrote the observation section around the cost of the arithmetic run (the run creates its own collisions; the earlier "concentrates collisions" reading reversed the causality). Removed the 0.48% / 5% baselines until they are recomputed under a fixed rule. Sharpened open question 2 into a testable experiment. Updated readme_EN / README_ZH to V1.4 r4. |
+| V2.2 | 2026-10-19 | Following W. Gu's review of 2026-10-19: renamed `readme_EN.md` to `README.en.md` (the old name clashed with `README.md` on case-insensitive file systems) and updated the links; CITATION.cff adds W. Gu's affiliation, `repository-code` and `identifiers`. `verify.py` now checks every count against its claimed value and exits with status 1 on a mismatch (W. Gu's fix: `expected` argument and check; the check is written so that `python -O` cannot switch it off). README.en / README_ZH updated to V1.4 r5. |
